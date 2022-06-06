@@ -13,6 +13,7 @@ import './Classify.css';
 import 'cropperjs/dist/cropper.css';
 
 
+
 const MODEL_PATH = '/model/model.json';
 const IMAGE_SIZE = 224;
 const CANVAS_SIZE = 224;
@@ -22,10 +23,7 @@ const INDEXEDDB_DB = 'tensorflowjs';
 const INDEXEDDB_STORE = 'model_info_store';
 const INDEXEDDB_KEY = 'web-model';
 
-/**
- * Class to handle the rendering of the Classify page.
- * @extends React.Component
- */
+
 export default class Classify extends Component {
 
   constructor(props) {
@@ -99,7 +97,7 @@ export default class Classify extends Component {
     this.setState({ modelLoaded: true });
     this.initWebcam();
 
-    // Warm up model.
+    // Cargar modelo
     let prediction = tf.tidy(() => this.model.predict(tf.zeros([1, IMAGE_SIZE, IMAGE_SIZE, 3])));
     prediction.dispose();
   }
@@ -220,6 +218,8 @@ export default class Classify extends Component {
     const probabilities = await logits.data();
     const preds = await this.getTopKClasses(probabilities, TOPK_PREDICTIONS);
 
+
+
     this.setState({
       predictions: preds,
       isClassifying: false,
@@ -301,14 +301,15 @@ export default class Classify extends Component {
 
   render() {
     return (
+
       <div className="Classify container">
 
       { !this.state.modelLoaded &&
         <Fragment>
           <Spinner animation="border" role="status">
-            <span className="sr-only">Loading...</span>
+            <span className="sr-only">Cargando...</span>
           </Spinner>
-          {' '}<span className="loading-model-text">Loading Model</span>
+          {' '}<span className="loading-model-text">Cargando la magia </span>
         </Fragment>
       }
 
@@ -320,7 +321,7 @@ export default class Classify extends Component {
           aria-controls="photo-selection-pane"
           aria-expanded={this.state.photoSettingsOpen}
           >
-          Take or Select a Photo to Classify
+          Identifica la especie
             <span className='panel-arrow'>
             { this.state.photoSettingsOpen
               ? <FaChevronDown />
@@ -368,7 +369,7 @@ export default class Classify extends Component {
               }
             <Tabs defaultActiveKey="camera" id="input-options" onSelect={this.handleTabSelect}
                   className="justify-content-center">
-              <Tab eventKey="camera" title="Take Photo">
+              <Tab eventKey="camera" title="Toma foto">
                 <div id="no-webcam" ref="noWebcam">
                   <span className="camera-icon"><FaCamera /></span>
                   No camera found. <br />
@@ -387,14 +388,14 @@ export default class Classify extends Component {
                     size="lg"
                     onClick={this.classifyWebcamImage}
                     isLoading={this.state.isClassifying}
-                    text="Classify"
-                    loadingText="Classifying..."
+                    text="Identifica"
+                    loadingText="identificando..."
                   />
                 </div>
               </Tab>
-              <Tab eventKey="localfile" title="Select Local File">
+              <Tab eventKey="localfile" title="Archivo de foto">
                 <Form.Group controlId="file">
-                  <Form.Label>Select Image File</Form.Label><br />
+                  <Form.Label>Selecciona una imagen</Form.Label><br />
                   <Form.Label className="imagelabel">
                     {this.state.filename ? this.state.filename : 'Browse...'}
                   </Form.Label>
@@ -435,7 +436,7 @@ export default class Classify extends Component {
           </Collapse>
           { this.state.predictions.length > 0 &&
             <div className="classification-results">
-              <h3>Predictions</h3>
+              <h3>La especie es:</h3>
               <canvas ref="canvas" width={CANVAS_SIZE} height={CANVAS_SIZE} />
               <br />
               <ListGroup>
@@ -446,8 +447,10 @@ export default class Classify extends Component {
                   );
               })}
               </ListGroup>
+
             </div>
           }
+
           </Fragment>
         }
       </div>
